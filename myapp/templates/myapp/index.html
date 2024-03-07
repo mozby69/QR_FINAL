@@ -1,50 +1,102 @@
 <!-- qr_scanner.html -->
 
 {% extends "myapp/base.html" %}
-
+{% load static %}
 {% block content %}
-  {% include 'myapp/navbar.html' %}
+
 
 
 <style>
     .table-container {
-        max-height: 690px;
+        max-height: 490px;
         overflow-y: auto;
     }
-    .toastSize{
+    .toastSize {
+        font-size: 1.3rem;
+        font-weight: bold;
+        padding: 1.1rem 1.1rem;
+        border:5px solid white;
+        position:relative;
+        top:3rem;
+      }
+
+      .toast-success {
+        color: white;
+        font-weight:bold;
         font-size:1.1rem;
+        border:5px solid white;
+      }
+  
+      .toast-error {
+        background-color: red;
+        color: white;
+        font-weight:bold;
+        font-size:1.1rem;
+        border:5px solid white;
+      }
+      .toast-top-right {
+        top: 4rem;
+        right:1rem;
+        float:right:
+      }
+
+    #error-message {
+        position: absolute;
+        top: 3.4rem;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        background-color: red;
+        color: white;
+        font-size: 1.1rem;
+        text-align: left; 
+        padding: 12rem 7rem; 
+        box-sizing: border-box;
         font-weight:bold;
     }
-   #error-message {
-    position: absolute;
-    top: 3.4rem;
-    left: 0; /* Adjust the left position */
-    width: 100%;
-    height: 100%;
-    display: none;
-    background-color: rgba(255, 0, 0, 0.7);
-    color: white;
-    font-size: 1.1rem;
-    text-align: left; /* Align the text to the left */
-    padding: 12rem 7rem; /* Adjust padding for better appearance */
-    box-sizing: border-box;
-    font-weight:bold;
-}
-
 
 </style>
 
-  <div class="container mt-5">
+<script src="{% static 'js/time.js' %}"></script>
+
+
+<div class="container-fluid" style="padding:2rem 1rem;background-color:#5EA061;border-radius:.5rem;text-align:center;">
+    <div class="HeaderContext">
+        <h1 class="fs-secondary fw-extra-bold" id="currentDate" style="font-weight:bold;color:white;"></h1>
+    
+        <h1 class="fs-primary fw-extra-bold text-clr-primary-accent" id="currentTime" style="font-weight:bold;font-size:clamp(1.8rem,3.2rem,4.7rem);color:#D5E8D6;"></h1>
+    
+        <script>
+            function updateDateTime() {
+                var currentDateElement = document.getElementById('currentDate');
+                var currentTimeElement = document.getElementById('currentTime');
+                var now = new Date();
+                var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                currentDateElement.textContent = now.toLocaleDateString('en-US', options);
+                var timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+                currentTimeElement.textContent = now.toLocaleTimeString('en-US', timeOptions);
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 700);
+        </script>
+    </div>
+</div>
+
+
+
+
+  <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <div id="webcam-container">
-                <video id="webcam" width="640" height="480" autoplay alt="IF THE VIDEO IS NOT SHOWING REFRESH THE PAGE"></video>
-                <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+            <div id="webcam-container" style="position:relative;right:5rem;">
+                <video id="webcam" width="640" height="580" autoplay alt="IF THE VIDEO IS NOT SHOWING REFRESH THE PAGE" ></video>
+                <canvas id="canvas" width="640" height="580" style="display: none;"></canvas>
                  <div id="error-message" style="font-size:3rem;font-weight: bold;">REFRESH THE PAGE</div>
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 mt-5">
             <div class="col-md-12" style="position: relative; left: 3rem;">
                 <div class="table-container card">
                     <div class="card-body">
@@ -52,11 +104,11 @@
                             <table id="defaultdatatable" class="table table-bordered table-hover table-striped tables">
                                 <thead>
                                     <tr>
-                                        <th>NAME</th>
-                                        <th>TIMEIN</th>
-                                        <th>BREAKOUT</th>
-                                        <th>BREAKIN</th>
-                                        <th>TIMEOUT</th>
+                                        <th style="background-color:#D5E8D6">NAME</th>
+                                        <th style="background-color:#D5E8D6">TIMEIN</th>
+                                        <th style="background-color:#D5E8D6">BREAKOUT</th>
+                                        <th style="background-color:#D5E8D6">BREAKIN</th>
+                                        <th style="background-color:#D5E8D6">TIMEOUT</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -181,16 +233,16 @@
 
         // Initialize Toastr
         toastr.options = {
-            positionClass: 'toast-top-left',
+            positionClass: 'toast-top-right',
             preventDuplicates: true,
             progressBar: true,
-            showDuration: 1000,
-            hideDuration: 1500,
-            timeOut: 5000,
+            showDuration: 2500,
+            hideDuration: 1000,
+            timeOut: 4300,
             extendedTimeOut: 1000,
-            messageClass: 'toastSize',
+        
         };
-
+       
 
        function fetchAndDisplayMessages() {
             $.ajax({
@@ -201,20 +253,20 @@
                     data.messages.forEach(function(message) {
                         // Check if 'no_bibo' is present in the comma-separated string of tags
                         if (message.tags.includes('no_bibo')) {
-                            toastr.error(message.text);
+                            toastr.error(message.text, {toastClass:'toast-error toastSize'});
                         }
 
                         else if (message.tags.includes('timein_already')) {
-                            toastr.error(message.text);
+                            toastr.error(message.text, {toastClass:'toast-error toastSize'});
                         }
                          else if (message.tags.includes('breakin_already')) {
-                            toastr.error(message.text);
+                            toastr.error(message.text, {toastClass:'toast-error toastSize'});
                         }
                         else if (message.tags.includes('timeout_already')) {
-                            toastr.error(message.text);
+                            toastr.error(message.text, {toastClass:'toast-error toastSize'});
                         }
                          else {
-                            toastr.success(message.text);
+                            toastr.success(message.text, {toastClass: 'toast-success toastSize'});
                         }
                     });
                 },

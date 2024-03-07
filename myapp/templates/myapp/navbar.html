@@ -19,21 +19,17 @@
             <a class="nav-link active text-white" aria-current="page" href="{% url 'index' %}">QR SCANNER</a>
           </li>
 
+          {% if user.username == 'admin' %}
           <li class="nav-item">
             <a class="nav-link active text-white" aria-current="page" href="{% url 'export' %}">EXPORT</a>
           </li>
 
 
           <li class="nav-item">
- 
-             <a class="nav-link active text-white" aria-current="page" href="{% url 'generate_qr_code' %}">ADD RECORD</a>
-     
-
+             <a class="nav-link active text-white" aria-current="page" href="{% url 'addemployee' %}" >ADD RECORD</a>
           </li>
-
-     
-
-
+          {% endif %}
+    
 
           <li class="nav-item">
             <a class="nav-link text-white logoutlink" data-bs-toggle="modal" data-bs-target="#logoutaccount">LOGOUT</a>

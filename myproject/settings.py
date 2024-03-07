@@ -12,16 +12,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
-import environ
+# import dj_database_url
+# import environ
 
 
 # import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-environ.Env.read_env()
+# env = environ.Env()
+# environ.Env.read_env()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -100,23 +100,23 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#     'default':{
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'djangodb2',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#         'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#         },
-#     }
-# }
-
 DATABASES = {
-    'default': dj_database_url.parse(env('DATABASE_URL'))
+    'default':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'djangodb2',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.parse(env('DATABASE_URL'))
+# }
 
 
 AUTH_PASSWORD_VALIDATORS = [

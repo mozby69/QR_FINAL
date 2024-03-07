@@ -30,10 +30,12 @@ class Employee(models.Model):
     EmployementDate = models.DateField(default=date(2000, 1, 1))
     EmploymentStatus = models.CharField(max_length=15,default="Regular")
     EmpImage = models.ImageField(upload_to='emp_image/', null=True, blank=True)
+    qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)
 
 
 
 class DailyRecord(models.Model):
+    ID = models.AutoField(primary_key=True, default=None)
     EmpCode = models.ForeignKey(Employee, on_delete=models.CASCADE, to_field='EmpCode', null=True)
     Empname = models.CharField(max_length=50, default = 'Unknown')
     date = models.DateField(default=date.today)
@@ -44,36 +46,73 @@ class DailyRecord(models.Model):
     totallateness = models.CharField(default='00:00', max_length=50)
     latecount = models.CharField(default = '0', max_length = 6)
     totalundertime = models.CharField(default='00:00',max_length= 8)
-    totalovertime = models.CharField(default='00:00', max_length= 8)
+    totalovertime = models.CharField(default='00:00:00', max_length= 8)
     created_at = models.DateTimeField(default=timezone.now)  
     approveOT = models.BooleanField(default=False)
-    branch_name = models.CharField(max_length=50, null=True, blank=True)
+    late = models.CharField(default = "None", max_length = 10)
+    absent = models.CharField(default = "None", max_length = 10)
+    remarks =models.CharField(default = "None", max_length = 400)
+    user_branchname = models.CharField(max_length=50, null=True, blank=True)
+   
+    class Meta:
+        db_table = 'attendance'
+        get_latest_by = 'date'
 
 
     def to_sql(self):
+        Empname = f"'{self.Empname}'" if self.Empname is not None else 'NULL'
+        EmpCode_id = f"'{self.EmpCode_id}'" if self.EmpCode is not None else 'NULL'
+        date = f"'{self.date}'" if self.date is not None else 'NULL'
         timein = f"'{self.timein}'" if self.timein is not None else 'NULL'
         timeout = f"'{self.timeout}'" if self.timeout is not None else 'NULL'
         breakout = f"'{self.breakout}'" if self.breakout is not None else 'NULL'
         breakin = f"'{self.breakin}'" if self.breakin is not None else 'NULL'
-        branch_name = f"'{self.branch_name}'" if self.branch_name is not None else 'NULL'
+        totallateness = f"'{self.totallateness}'" if self.totallateness is not None else 'NULL'
+        latecount = f"'{self.latecount}'" if self.latecount is not None else 'NULL'
+        totalundertime = f"'{self.totalundertime}'" if self.totalundertime is not None else 'NULL'
+        totalovertime = f"'{self.totalovertime}'" if self.totalovertime is not None else 'NULL'
+        approveOT = f"'{self.approveOT}'" if self.approveOT is not None else 'NULL'
+        absent = f"'{self.absent}'" if self.absent is not None else 'NULL'
+        late = f"'{self.late}'" if self.late is not None else 'NULL'
+        remarks = f"'{self.remarks}'" if self.remarks is not None else 'NULL'
+
+       
         
-        return f"INSERT INTO attendance(Empname, date, timein, timeout, breakout, breakin, branch_name, created_at) VALUES " \
-               f"('{self.Empname}', '{self.date}', {timein}, {timeout}, {breakout}, {breakin}, {branch_name}, '{self.created_at.strftime('%Y-%m-%d %H:%M:%S')}');"
+        return f"INSERT INTO attendance(Empname, EmpCode_id, date, timein, timeout, breakout, breakin, totallateness,latecount,totalundertime, totalovertime, created_at, approveOT,absent,late,remarks) VALUES " \
+               f"('{self.Empname}', '{self.EmpCode_id}','{self.date}', {self.timein}, {self.timeout}, {self.breakout}, { self.breakin}, {self.totallateness}, {self.latecount} , {self.totalundertime}, {self.totalovertime}, '{self.created_at.strftime('%Y-%m-%d %H:%M:%S')}', {self.approveOT}, {self.absent}, {self.late}, {self.remarks});"
 
     def to_sql_all(self):
         timeout = f"'{self.timeout}'" if self.timeout is not None else 'NULL'
         breakout = f"'{self.breakout}'" if self.breakout is not None else 'NULL'
         breakin = f"'{self.breakin}'" if self.breakin is not None else 'NULL'
+        totallateness = f"'{self.totallateness}'" if self.totallateness is not None else 'NULL'
+        latecount = f"'{self.latecount}'" if self.latecount is not None else 'NULL'
+        totalundertime = f"'{self.totalundertime}'" if self.totalundertime is not None else 'NULL'
+        totalovertime = f"'{self.totalovertime}'" if self.totalovertime is not None else 'NULL'
+        approveOT = f"'{self.approveOT}'" if self.approveOT is not None else 'NULL'
+        absent = f"'{self.absent}'" if self.absent is not None else 'NULL'
+        late = f"'{self.late}'" if self.late is not None else 'NULL'
+        remarks = f"'{self.remarks}'" if self.remarks is not None else 'NULL'
 
         return f"UPDATE attendance SET " \
                f"timeout = {timeout}, " \
                f"breakout = {breakout}, " \
                f"breakin = {breakin} " \
-               f"WHERE Empname = '{self.Empname}' AND date = '{self.date}' AND branch_name = '{self.branch_name}';"
+               f"totallateness = {totallateness} " \
+               f"latecount = {latecount} " \
+               f"totalundertime = {totalundertime} " \
+               f"totalovertime = {totalovertime} " \
+               f"approveOT = {approveOT} " \
+               f"absent = {absent} " \
+               f"late = {late} " \
+               f"remarks = {remarks} " \
+               f"WHERE Empname = '{self.Empname}' AND EmpCode_id = {self.EmpCode_id} AND date = '{self.date}' ;"
 
 
     class Meta:
         db_table = 'attendance'
+
+
 
 
 
@@ -101,12 +140,12 @@ class temporay(models.Model):
 
   
 
-class QRList(models.Model):
-    name = models.CharField(max_length=100,null=True)
-    qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)
+# class QRList(models.Model):
+#     name = models.CharField(max_length=100,null=True)
+#     qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)
     
-    class Meta:
-        db_table = 'qr_list'    
+#     class Meta:
+#         db_table = 'qr_list'    
     
     
 
