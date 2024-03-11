@@ -35,11 +35,8 @@
                     <input type="date" class="form-control" id="{{ form.selected_date.id_for_label }}" name="{{ form.selected_date.name }}" style="width: 100%; padding: 0.6rem;">
   
                     <div class="d-flex justify-content-between mt-4">
-                      <button type="submit" class="btn btn-success px-5">Export</button>
-                     
-                      <span style="background-color:white;color:#4E7A5D;border:1px solid #4E7A5D;text-align:center;padding:.5rem 1rem;border-radius:.5rem;" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" >
-                              View Attendance
-                      </span>
+                      <button type="submit" class="btn btn-success px-5">Export</button>       
+                      <a href="{% url 'view_attendance' %}"class="btn btn-primary px-4" style="background-color:white;color:#4E7A5D;border:1px solid #4E7A5D;">View Attendance</a>
 
                     </div>
 
@@ -85,7 +82,7 @@
   
                     <div class="d-flex justify-content-between mt-4">
                       <button type="submit" class="btn btn-success px-5">Export</button>
-                      <button type="submit" class="btn px-4" style="background-color:white;color:#4E7A5D;border:1px solid #4E7A5D;">View Attendance</button>
+                      {% comment %} <button type="submit" class="btn px-4" style="background-color:white;color:#4E7A5D;border:1px solid #4E7A5D;">View Attendance</button> {% endcomment %}
                     </div>
                   </div>
   
@@ -101,48 +98,8 @@
 
 
      <!-- view MODAL EMPLOYEE -->
-     <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteEmployeeModal" aria-hidden="true">
-      <div class="modal-dialog">
-        <form action="" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="id" value="deleteEmployeeModal">
-      
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="deleteEmployeeModal">Attendance</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-
-          <div class="modal-body">
-            <table>
-              <thead>
-                  <tr>
-                      <th>Employee Code</th>
-                      <th>TIME IN</th>
-                      <th>BREAK OUT</th>
-                      </tr>
-              </thead>
-              <tbody>
-                  {% for record in data %}
-                  <tr>
-                      <td>{{ record.Empname }}</td> 
-                      <td>{{ record.timein }}</td>
-                      <td>{{ record.breakout }}</td>
-                    </tr>
-                  {% endfor %}
-              </tbody>
-          </table>
-        
-          </div>
-          
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        
-          </div>
-        </div>
-      </form>
-      </div>
-    </div>
+     
+    
 
 
 

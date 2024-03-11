@@ -52,6 +52,10 @@ def home(request):
 def index(request):
     return render(request,'myapp/index.html')
 
+def display_current_time(request):
+    internet_time = request.current_time.isoformat()
+    return JsonResponse({'internet_time': internet_time})
+
 
 def fetch_messages(request):
     messages = get_messages(request)
@@ -73,6 +77,7 @@ def webcam_qr_code_scanner(request):
         image_data = request.FILES['webcam_image'].read()
         decoded_objects = scan_qr_code_from_image_data(image_data)
         current_time = datetime.now()
+        #current_time = request.current_time
 
         if decoded_objects:
             EmpCode = decoded_objects[0].data.decode('utf-8')
@@ -91,14 +96,14 @@ def webcam_qr_code_scanner(request):
             employee_instance = Employee.objects.get(EmpCode=EmpCode)
             full_name = f"{employee_instance.Firstname} {employee_instance.Middlename} {employee_instance.Lastname}"
             if "03:00" <= prac_time <= "09:59": 
-                # existing_entry = DailyRecord.objects.filter(EmpCode_id=EmpCode,date=current_time.date()).first()
-                # if existing_entry is None: 
-                employee_instance = Employee.objects.get(EmpCode=EmpCode)
-                full_name = f"{employee_instance.Firstname} {employee_instance.Middlename} {employee_instance.Lastname}"
-                insertData(EmpCode, current_time,employee_instance,request) 
-                temporay.objects.filter(EmpCode_id=EmpCode,date=current_time.date()).create(Empname=full_name,EmpCode_id=EmpCode,timein_names=EmpCode,timein_timestamps=current_time)
-                messages.success(request, f'TIME IN SUCCESSFULLY!<br> {full_name}', extra_tags='timein')
-                return HttpResponseRedirect(request.path)
+                existing_entry = DailyRecord.objects.filter(EmpCode_id=EmpCode,date=current_time.date()).first()
+                if existing_entry is None: 
+                    employee_instance = Employee.objects.get(EmpCode=EmpCode)
+                    full_name = f"{employee_instance.Firstname} {employee_instance.Middlename} {employee_instance.Lastname}"
+                    insertData(EmpCode, current_time,employee_instance,request) 
+                    temporay.objects.filter(EmpCode_id=EmpCode,date=current_time.date()).create(Empname=full_name,EmpCode_id=EmpCode,timein_names=EmpCode,timein_timestamps=current_time)
+                    messages.success(request, f'TIME IN SUCCESSFULLY!<br> {full_name}', extra_tags='timein')
+                    return HttpResponseRedirect(request.path)
 
                 #TIME IN ALREADY EXISTING
                 timein_already = temporay.objects.filter(Empname=full_name, date=current_time.date()).first()
@@ -787,8 +792,8 @@ def login_view(request):
                 login(request, user)
                 if request.user.username == 'admin':
                     return redirect('home')
-                elif request.user.username == 'fch_main':
-                    return redirect('index')
+                # elif request.user.username == 'fch_main':
+                #     return redirect('index')
                 else:
                     return redirect('index')
             

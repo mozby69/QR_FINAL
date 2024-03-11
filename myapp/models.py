@@ -38,7 +38,7 @@ class DailyRecord(models.Model):
     ID = models.AutoField(primary_key=True, default=None)
     EmpCode = models.ForeignKey(Employee, on_delete=models.CASCADE, to_field='EmpCode', null=True)
     Empname = models.CharField(max_length=50, default = 'Unknown')
-    date = models.DateField(default=date.today)
+    date = models.DateField(null=True)
     timein = models.TimeField(blank=True, null=True)
     timeout = models.TimeField(blank=True, null=True)
     breakout = models.TimeField(blank=True, null=True)

@@ -70,8 +70,8 @@
                                         <img src="{{ qr.qr_code.url }}" alt="QR Code" width="50px" height="50px">
                                         
                                       {% else %}
-                                          <img src="{% static 'images/not_available.jpg' %}"  width="49px" height="41px">
-                                        
+                                          {% comment %} <img src="{% static 'images/not_available.jpg' %}"  width="49px" height="41px"> {% endcomment %}
+                                          <p>NO IMAGE</p>
                                       {% endif %}
                                       </td>
                                     
@@ -185,7 +185,7 @@
                       <button type="button" style="margin-bottom:1rem;border-radius: .5rem;padding: .7rem 1rem;background-color: #5EA061;color:#FFFFFF;font-size:1.2rem;font-weight:bold;border:none;">Download QR</button>
                   </a>
               {% else %}
-                  <img src="{% static 'images/not_available.jpg' %}"  width="300px" height="300px" style="position:relative;top:.6rem;padding:1rem;">
+                  <img src="{% static 'images/no_image.jpg' %}"  width="300px" height="300px" style="position:relative;top:.6rem;padding:1rem;">
                 
                  
               {% endif %}
